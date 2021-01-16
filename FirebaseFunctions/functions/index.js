@@ -1,3 +1,4 @@
+//#region Initialization
 const functions = require("firebase-functions");
 const admin = require('firebase-admin');
 const app = require('express')();
@@ -18,7 +19,9 @@ const firebase = require('firebase');
 firebase.initializeApp(config);
 
 const db = admin.firestore();
+//#endregion
 
+//#region Screams get/set
 app.get('/scream', (request, response) =>{
     db.collection('screams')
     .orderBy('createdAt', 'desc')
@@ -53,9 +56,33 @@ app.post('/scream', (request, response)=>{
             console.error(error);
         });
 });
+//#endregion
 
-//sign up route
+//#region HELPRERS
+const isEmpty = function(string) {
+    if (string.trim()===''){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+const isEmail = function(email){
+    const emailRegEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if(email.match(emailRegEx)){
+        return true;
+    }
+    else{
+        return false
+    }
+}
+//#endregion
+
+//#region SignUp
 app.post('/signup', (request, response)=>{
+
+
     const newUser={
         email : request.body.email,
         password : request.body.password,
@@ -63,9 +90,34 @@ app.post('/signup', (request, response)=>{
         handle : request.body.handle,
     }
 
-    let userId, token;
+    let errors={};
 
-    //TODO validate data
+    //#region DATA VALIDATION
+    if(isEmpty(newUser.email)){
+        errors.email='Must not be empty';
+    }
+    else if(!isEmail(newUser.email)){
+        errors.email = 'Must be a valid email';
+    }
+
+    if(isEmpty(newUser.password)){
+        errors.password='Must not be empty';
+    }
+
+    if(newUser.confirmPassword!==newUser.password){
+        errors.confirmPassword='Passwords must match';
+    }
+
+    if(isEmpty(newUser.handle)){
+        errors.handle='Must not be empty';
+    }
+
+    if(Object.keys(errors).length>0){
+        return response.status(400).json(errors);
+    }
+    //#endregion
+
+    let userId, token;
     db.doc(`/users/${newUser.handle}`) //try to access the just created user document if it exists
     .get()
     .then(doc => {
@@ -105,6 +157,49 @@ app.post('/signup', (request, response)=>{
         }
     });
 
-})
+});
+//#endregion
 
+//#region Login
+app.post('/login', (request, response)=>{
+    const user = {
+        email:request.body.email,
+        password: request.body.password
+    };
+
+    
+    //#region Data validation
+    let errors ={};
+    if(isEmpty(user.email)){
+        errors.email = 'Must not be empty';
+    }
+
+    if(isEmpty(user.password)){
+        errors.password = 'Must not be empty';
+    }
+
+    if(Object.keys(errors).length>0){
+        return response.status(400).json(errors);
+    }
+    //#endregion
+
+    firebase.auth().signInWithEmailAndPassword(user.email, user.password)
+    .then(data => {
+        return data.user.getIdToken();
+    })
+    .then(tokenId=>{
+        return response.json({tokenId});
+    })
+    .catch((error)=>{
+        console.error(error);
+
+        if(error.code='auth/invalid-email'){
+            return response.status(403).json({general: 'Wrong credentials, please try again'});
+        }
+        else{
+            return response.status(500).json({error: error.code});
+        }
+    })
+});
+//#endregion
 exports.api = functions.region('europe-west1').https.onRequest(app);
