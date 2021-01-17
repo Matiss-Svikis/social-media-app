@@ -1,5 +1,4 @@
-const {admin} = require('./admin');
-const {db} = require('../utility/admin');
+const {admin, db} = require('./admin');
 
 module.exports.firebaseAuthentication = (request, response, next)=>{
     let idToken;
