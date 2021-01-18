@@ -145,6 +145,10 @@ exports.uploadImage = (request, response) =>{
         console.log(fieldname);
         console.log(filename);
         console.log(miemtype);
+
+        if(miemtype!=='image/jpeg' && miemtype!=='image/png'){
+            return response.status(400).json({error: 'Wrong file type submitted'}); // 400 = Client error: bad request
+        }
         
         /*
             We need to get the filetype of the image png/jpeg etc...

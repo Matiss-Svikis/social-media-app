@@ -13,7 +13,6 @@ module.exports.firebaseAuthentication = (request, response, next)=>{
     admin.auth().verifyIdToken(idToken)
     .then((decodedIdToken) =>{
         request.user = decodedIdToken;
-        console.log(decodedIdToken);
         return db.collection('users')
         .where('userId', '==', request.user.uid)
         .limit(1)
