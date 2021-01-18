@@ -1,3 +1,6 @@
+const { user } = require("firebase-functions/lib/providers/auth");
+
+//#region HELPERS
 const isEmpty = function(string) {
     if (string.trim()===''){
         return true;
@@ -16,6 +19,7 @@ const isEmail = function(email){
         return false
     }
 }
+//#endregion
 
 exports.validateSignupData = (data) =>{
     let errors={};
@@ -59,4 +63,32 @@ exports.validateLoginData = (data) =>{
         errors,
         valid: Object.keys(errors).length===0 ? true : false
     }
+}
+
+/*
+    This function reduces the users input for writing into database,
+    when submitting a form, if the user doesnt input a location for example
+    then we dont want to write that to the database, thats why with this functions
+    we dont include it into the object that will be handled by addUserDetails function
+*/
+exports.reduceUserDetails = (data) =>{
+    let userDetails = {};
+    if(!isEmpty(data.bio.trim())){
+        userDetails.bio= data.bio;
+    }
+    if(!isEmpty(data.website.trim())){
+      //  https://website.com
+      //checks if website doesnt start with http...
+        if(data.website.trim().substring(0,4)!=='http'){ // the 4 is actually the p not the s in https ...wtf
+            userDetails.website= `http://${data.website.trim()}`;
+        } 
+        else{
+            userDetails.website=data.website;
+        }
+    }
+        if(!isEmpty(data.location.trim())){
+            userDetails.location = data.location;
+        }
+
+        return userDetails;
 }

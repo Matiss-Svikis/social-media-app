@@ -1,7 +1,9 @@
+//#region Initializations
 const {db, admin} = require('../utility/admin');
 const {config} = require('../utility/config');
 const firebase = require('firebase');
-const {validateSignupData, validateLoginData} = require('../utility/validators');
+const {validateSignupData, validateLoginData, reduceUserDetails} = require('../utility/validators');
+//#endregion
 
 firebase.initializeApp(config);
 
@@ -24,7 +26,6 @@ firebase.initializeApp(config);
      handle
  }
  */
-//#region Signup
 exports.signup= (request, response)=>{
 
     const newUser={
@@ -83,7 +84,6 @@ exports.signup= (request, response)=>{
         }
     });
 }
-//#endregion
 
 /**
  This function is responsible for user authentication into the system
@@ -93,7 +93,6 @@ exports.signup= (request, response)=>{
      password
  }
  */
-//#region login
 exports.login = (request, response)=>{
     const user = {
         email:request.body.email,
@@ -124,14 +123,12 @@ exports.login = (request, response)=>{
         }
     })
 }
-//#endregion
 
 /*
 This function is responsible for image upload to the database for user profile picture
 using the busboy library which can be installed with the following command(in functions folder):
 npm install --save busboy 
 */
-//#region uploadImage
 exports.uploadImage = (request, response) =>{
     const BusBoy = require('busboy');
     const path = require('path'); //default package in all node projects
@@ -200,4 +197,18 @@ exports.uploadImage = (request, response) =>{
     busboy.end(request.rawBody);
 }
 
-//#endregion
+/*
+This function is responsible for uploading user info to the database like
+bio, website, location
+*/
+exports.addUserDetails= (request, response) => {
+    let userDetails = reduceUserDetails(request.body);
+    db.doc(`/users/${request.user.handle}`).update(userDetails)
+    .then(()=>{
+        return response.json({message: 'Details added successfully'});
+    })
+    .catch((error)=>{
+        console.error(error);
+        return response.status(500).json({error:error.code});
+    })
+}
