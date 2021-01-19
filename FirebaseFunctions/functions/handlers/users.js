@@ -212,3 +212,42 @@ exports.addUserDetails= (request, response) => {
         return response.status(500).json({error:error.code});
     })
 }
+
+/*
+This function is responsible for getting user credentials in this format:
+{
+    "credentials": {
+        "email": "user@email.com",
+        "handle": "user",
+        "createdAt": "2021-01-18T10:14:36.396Z",
+        "location": "london uk",
+        "imageUrl": "https://firebasestorage.googleapis.com/v0/b/socialmediaclone-c3756.appspot.com/o/85985437846.jpg?alt=media",
+        "bio": "biotest",
+        "userId": "HyCuqctsXtWdhzDXIKpIVFevh9H3",
+        "website": "http://user.com"
+    },
+    "likes": []
+}
+*/
+exports.getAuthenticatedUser = (request, response) => {
+    let userData = {};
+    db.doc(`/users/${request.user.handle}`)
+    .get()
+    .then(doc => {
+        if(doc.exists){
+            userData.credentials = doc.data();
+            return db.collection('likes').where('userHandle', '==', request.user.handle).get();
+        }
+    })
+    .then(data => {
+        userData.likes= [];
+        data.forEach(doc => {
+            userData.likes.push(doc.data());
+        });
+        return response.json(userData);
+    })
+    .catch(error =>{
+        console.error(error);
+        return response.status(500).json({error: error.code});
+    })
+}
