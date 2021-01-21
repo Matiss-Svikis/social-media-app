@@ -6,6 +6,8 @@ const {
     postOneScream,
     getScream,
     commentOnScream,
+    likeScream,
+    unLikeScream
 } = require('./handlers/screams');
 const {
     signup,
@@ -21,8 +23,11 @@ const {firebaseAuthentication} = require('./utility/firebaseAuthentication');
 app.get('/scream', firebaseAuthentication, getAllScreams);
 app.post('/scream', firebaseAuthentication, postOneScream);
 app.get('/scream/:screamId', getScream); //the column in the route is for url parameters
-app.post('/scream/:screamId/comment', firebaseAuthentication, commentOnScream)
-//to do: route for delete , like a scream , unlike a scream, unlike a screa, comment on scream
+app.post('/scream/:screamId/comment', firebaseAuthentication, commentOnScream);
+app.get('/scream/:screamId/like', firebaseAuthentication, likeScream);
+//app.get('/scream/:screamId/unLike', firebaseAuthentication, unLikeScream);
+
+//to do: route for delete
 
 //User routes
 app.post('/signup', signup);
