@@ -126,6 +126,9 @@ exports.commentOnScream = (request, response) =>{
             return response.status(404).json({error:'Scream doesnt exist'});
         }
 
+        return doc.ref.update({commentCount:doc.data().commentCount +1});
+    })
+    .then(()=>{
         return db.collection('comments').add(newComment);
     })
     .then(()=>{
@@ -170,7 +173,7 @@ exports.likeScream = (request, response)=>{
                 return screamDocument.update({likeCount: screamData.likeCount});
             })
             .then(()=>{
-                return response.json(screamData);
+                return response.json({screamData});
             })
         }
         else{
@@ -179,7 +182,7 @@ exports.likeScream = (request, response)=>{
     })
     .catch(error=>{
         console.error(error);
-        response.status(500).json({error:error.code});
+        return response.status(500).json({error:error.code});
     })
 }
 
@@ -187,5 +190,41 @@ exports.likeScream = (request, response)=>{
      This function is responsible for unliking a scream
 */
 exports.unlikeScream = (request, response)=>{
+    const likeDocument = db.collection('likes').where('userHandle','==', request.user.handle)
+    .where('screamId', '==', request.params.screamId).limit(1);
 
+    const screamDocument = db.doc(`/screams/${request.params.screamId}`);
+
+    let screamData;
+
+    screamDocument.get()
+    .then(doc =>{
+        if(doc.exists){
+            screamData = doc.data();
+            screamData.screamId= doc.id
+            return likeDocument.get();
+        }
+        else{
+            return response.status(404).json({error:"Scream not found"});
+        }
+    })
+    .then(data =>{
+        if(data.empty){
+            return response.status(400).json({error:"Scream not liked"});
+        }
+        else{
+            db.doc(`/likes/${data.docs[0].id}`).delete()
+            .then(() =>{
+                screamData.likeCount--;
+                return screamDocument.update({likeCount:screamData.likeCount});
+            })
+            .then(() =>{
+                response.json({screamData});
+            })
+        }
+    })
+    .catch(error=>{
+        console.error(error);
+        return response.status(500).json({error:error.code});
+    })
 }
