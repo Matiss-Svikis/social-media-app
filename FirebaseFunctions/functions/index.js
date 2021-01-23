@@ -64,7 +64,7 @@ exports.createNotificationOnLike = functions.region('europe-west1').firestore.do
     })
 })
 
-exports.createNotificationOnComment = functions.region('europe-west1').firestore.document('likes/{id}')
+exports.deleteNotificationOnUnlike = functions.region('europe-west1').firestore.document('likes/{id}')
 .onDelete((snapshot)=>{
     db.doc(`notifications/${snapshot.id}`)
     .delete()
