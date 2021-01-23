@@ -63,3 +63,27 @@ exports.createNotificationOnLike = functions.region('europe-west1').firestore.do
         }
     })
 })
+
+exports.createNotificationOnComment = functions.region('europe-west1').firestore.document('comments/{id}')
+.onCreate((snapshot)=>{
+    db.doc(`/screams/${snapshot.data().screamId}`).get()
+    .then(doc => {
+        if(doc.exists){
+            return db.doc(`/notifications/${snapshot.id}`).set({
+                createdAt:new Date().toJSON(),
+                recipient:doc.data().userHandle,
+                sender: snapshot.data().userHandle,
+                type: 'comment',
+                read:false,
+                screamId: doc.id,
+            })
+            .then(() => {
+                return;
+            })
+            .catch(error =>{
+                console.error(error);
+                return; //no need to send back a response because this is a database trigger
+            })
+        }
+    })
+})
