@@ -1,7 +1,7 @@
 //#region Initialization
 const functions = require("firebase-functions");
 const app = require('express')();
-const db = require('./util/admin');
+const {db} = require('./utility/admin');
 const {
     getAllScreams,
     postOneScream,
@@ -53,14 +53,14 @@ exports.createNotificationOnLike = functions.region('europe-west1').firestore.do
                 read:false,
                 screamId: doc.id,
             })
-            .then(() => {
-                return;
-            })
-            .catch(error =>{
-                console.error(error);
-                return; //no need to send back a response because this is a database trigger
-            })
         }
+    })
+    .then(() => {
+        return;
+    })
+    .catch(error =>{
+        console.error(error);
+        return; //no need to send back a response because this is a database trigger
     })
 })
 
@@ -91,13 +91,13 @@ exports.createNotificationOnComment = functions.region('europe-west1').firestore
                 read:false,
                 screamId: doc.id,
             })
-            .then(() => {
-                return;
-            })
-            .catch(error =>{
-                console.error(error);
-                return; //no need to send back a response because this is a database trigger
-            })
         }
+    })
+    .then(() => {
+        return;
+    })
+    .catch(error =>{
+        console.error(error);
+        return; //no need to send back a response because this is a database trigger
     })
 })
