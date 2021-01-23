@@ -64,6 +64,20 @@ exports.createNotificationOnLike = functions.region('europe-west1').firestore.do
     })
 })
 
+exports.createNotificationOnComment = functions.region('europe-west1').firestore.document('likes/{id}')
+.onDelete((snapshot)=>{
+    db.doc(`notifications/${snapshot.id}`)
+    .delete()
+    .then(() => {
+        return;
+    })
+    .catch(error =>{
+        console.error(error);
+        return;
+    })
+})
+
+
 exports.createNotificationOnComment = functions.region('europe-west1').firestore.document('comments/{id}')
 .onCreate((snapshot)=>{
     db.doc(`/screams/${snapshot.data().screamId}`).get()
