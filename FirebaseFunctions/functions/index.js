@@ -17,6 +17,7 @@ const {
     uploadImage,
     addUserDetails,
     getAuthenticatedUser,
+    getUserDetails,
 } = require('./handlers/users');
 
 const {firebaseAuthentication} = require('./utility/firebaseAuthentication');
@@ -37,6 +38,8 @@ app.post('/login', login);
 app.post('/users/image', firebaseAuthentication, uploadImage);
 app.post('/users', firebaseAuthentication, addUserDetails);
 app.get('/users', firebaseAuthentication, getAuthenticatedUser);
+app.get('/users/:handle', getUserDetails);
+//app.post('/notifications',firebaseAuthentication, markNotificationsRead);
 
 exports.api = functions.region('europe-west1').https.onRequest(app);
 

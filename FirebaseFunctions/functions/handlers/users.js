@@ -215,6 +215,42 @@ exports.addUserDetails= (request, response) => {
 
 /*
 This function is responsible for getting user credentials in this format:
+}
+*/
+exports.getUserDetails = (request, response) =>{
+    let userData = {};
+    db.doc(`/users/${request.params.handle}`).get()
+    .then(doc =>{
+        if(doc.exists){
+            userData.user=doc.data();
+            return db.collection('screams').where('userHandle', '==', request.params.handle)
+            .orderBy('createdAt', 'desc')
+            .get();
+        }
+    })
+    .then(data =>{
+        userData.screams =[];
+        data.forEach(doc =>{
+            userData.screams.push({
+                body:doc.data().body,
+                createdAt:doc.data().createdAt,
+                userHandle:doc.data().userHandle,
+                userImage:doc.data().userImage,
+                likeCount:doc.data().likeCount,
+                commentCount:doc.data().commentCount,
+                screamId: doc.id
+            })
+        });
+        return response.json(userData);
+    })
+    .catch(error => {
+        console.error(error);
+        return response.status(500).json({ error: error.code});
+    })
+}
+
+/*
+This function is responsible for getting user credentials in this format:
 {
     "credentials": {
         "email": "user@email.com",
@@ -267,3 +303,5 @@ exports.getAuthenticatedUser = (request, response) => {
         return response.status(500).json({error: error.code});
     })
 }
+
+
