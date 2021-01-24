@@ -214,7 +214,35 @@ exports.addUserDetails= (request, response) => {
 }
 
 /*
-This function is responsible for getting user credentials in this format:
+This function is responsible for getting public user data in this format:
+{
+    "user": {
+        "createdAt": "2021-01-23T09:41:07.701Z",
+        "handle": "user1",
+        "email": "user1@email.com",
+        "imageUrl": "https://firebasestorage.googleapis.com/v0/b/socialmediaclone-c3756.appspot.com/o/no-image.png?alt=media",
+        "userId": "yC1TQcHeUJgu8L853zMQ65OGXrJ3"
+    },
+    "screams": [
+        {
+            "body": "Loud scream 2",
+            "createdAt": "2021-01-24T13:31:20.821Z",
+            "userHandle": "user1",
+            "userImage": "https://firebasestorage.googleapis.com/v0/b/socialmediaclone-c3756.appspot.com/o/no-image.png?alt=media",
+            "likeCount": 0,
+            "commentCount": 0,
+            "screamId": "OEEFAYu6Eyu1hPv9T7vR"
+        },
+        {
+            "body": "Loud scream",
+            "createdAt": "2021-01-23T09:41:29.341Z",
+            "userHandle": "user1",
+            "userImage": "https://firebasestorage.googleapis.com/v0/b/socialmediaclone-c3756.appspot.com/o/no-image.png?alt=media",
+            "likeCount": 1,
+            "commentCount": 0,
+            "screamId": "9N6o8PfW4p8vsuvWi4Ti"
+        }
+    ]
 }
 */
 exports.getUserDetails = (request, response) =>{
@@ -226,6 +254,9 @@ exports.getUserDetails = (request, response) =>{
             return db.collection('screams').where('userHandle', '==', request.params.handle)
             .orderBy('createdAt', 'desc')
             .get();
+        }
+        else{
+            return response.status(404).json({error:'User not found'});
         }
     })
     .then(data =>{
@@ -297,6 +328,25 @@ exports.getAuthenticatedUser = (request, response) => {
             })
         })
         return response.json(userData);
+    })
+    .catch(error =>{
+        console.error(error);
+        return response.status(500).json({error: error.code});
+    })
+}
+
+/*
+This function is responsible for marking the notifications as read when user sees them
+*/
+exports.markNotificationsRead = (request, response) =>{
+    let batch = db.batch();
+    request.body.forEach(notificationId =>{
+        const notification = db.doc(`/notifications/${notificationId}`);
+        batch.update(notification, {read:true});
+    });
+    batch.commit()
+    .then(() =>{
+        return response.json({message: 'Notifications marked as read'});
     })
     .catch(error =>{
         console.error(error);
