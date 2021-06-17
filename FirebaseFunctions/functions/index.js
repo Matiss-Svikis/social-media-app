@@ -1,6 +1,6 @@
 //#region Initialization
 const functions = require("firebase-functions");
-// I was at 3h & 55mins on youtube
+// allright, backend is finished, yt video at 4h and 23 mins
 const app = require('express')();
 const { db } = require('./utility/admin');
 const {
