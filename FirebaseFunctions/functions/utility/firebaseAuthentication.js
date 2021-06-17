@@ -2,6 +2,7 @@ const {admin, db} = require('./admin');
 
 module.exports.firebaseAuthentication = (request, response, next)=>{
     let idToken;
+    
     if(request.headers.authorization && request.headers.authorization.startsWith('Bearer ')){
         idToken = request.headers.authorization.split('Bearer ')[1];
     }
@@ -29,5 +30,4 @@ module.exports.firebaseAuthentication = (request, response, next)=>{
         console.error('Error while verifiying token', error);
         return response.status(500).json(error);
     })
-
 }
