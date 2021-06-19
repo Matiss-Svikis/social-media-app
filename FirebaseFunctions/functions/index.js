@@ -26,7 +26,7 @@ const { firebaseAuthentication } = require('./utility/firebaseAuthentication');
 //#endregion
 
 //Scream routes
-app.get('/scream', firebaseAuthentication, getAllScreams);
+app.get('/screams', getAllScreams);
 app.post('/scream', firebaseAuthentication, postOneScream);
 app.get('/scream/:screamId', getScream); //the column in the route is for url parameters
 app.post('/scream/:screamId/comment', firebaseAuthentication, commentOnScream);
