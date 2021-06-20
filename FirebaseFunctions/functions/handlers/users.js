@@ -109,8 +109,8 @@ exports.login = (request, response) => {
         .then(data => {
             return data.user.getIdToken();
         })
-        .then(tokenId => {
-            return response.json({ tokenId });
+        .then(token => {
+            return response.json({ token });
         })
         .catch((error) => {
             console.error(error);
