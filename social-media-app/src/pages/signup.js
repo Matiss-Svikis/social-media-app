@@ -120,7 +120,7 @@ export class signup extends Component {
     }
 }
 
-signup.protoTypes = {
+signup.propTypes = {
     classes: PropTypes.object.isRequired,
     user: PropTypes.object.isRequired,
     UI: PropTypes.object.isRequired,

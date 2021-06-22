@@ -93,7 +93,7 @@ export class login extends Component {
     }
 }
 
-login.protoTypes = {
+login.propTypes = {
     classes: PropTypes.object.isRequired,
     loginUser: PropTypes.func.isRequired,
     user: PropTypes.object.isRequired,
