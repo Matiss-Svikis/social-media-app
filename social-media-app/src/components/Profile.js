@@ -15,6 +15,7 @@ import IconButton from '@material-ui/core/IconButton'
 import EditIcon from '@material-ui/icons/Edit';
 import { Tooltip } from '@material-ui/core';
 import KeyboardReturn from '@material-ui/icons/KeyboardReturn';
+import EditDetails from './EditDetails'
 const styles = (theme) => ({
     paper: {
         padding: 20
@@ -130,6 +131,7 @@ class Profile extends Component {
                             <KeyboardReturn color='primary' />
                         </IconButton>
                     </Tooltip>
+                    <EditDetails />
                 </div>
             </Paper>
         ) : (
