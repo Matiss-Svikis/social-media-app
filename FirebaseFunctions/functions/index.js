@@ -38,7 +38,7 @@ app.delete('/scream/:screamId', firebaseAuthentication, deleteScream)
 app.post('/signup', signup);
 app.post('/login', login);
 app.post('/user/image', firebaseAuthentication, uploadImage);
-app.post('/users', firebaseAuthentication, addUserDetails);
+app.post('/user', firebaseAuthentication, addUserDetails);
 app.get('/user', firebaseAuthentication, getAuthenticatedUser);
 app.get('/user/:handle', getUserDetails);
 app.post('/notifications', firebaseAuthentication, markNotificationsRead);
