@@ -93,7 +93,6 @@ class Profile extends Component {
         loading,
       },
     } = this.props;
-    console.log(this.props);
     let profileMarkup = !loading ? (
       authenticated ? (
         <Paper className={classes.paper}>
