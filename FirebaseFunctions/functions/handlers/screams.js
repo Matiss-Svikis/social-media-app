@@ -26,6 +26,10 @@ exports.getAllScreams = (request, response) => {
     This function is responsible for posting one scream
 */
 exports.postOneScream = (request, response) => {
+  if (req.body.body.trim() === "") {
+    return response.status(400).json({ body: "Body must not be empty" });
+  }
+
   const newScream = {
     body: request.body.body,
     userHandle: request.user.handle, // get the user handle from the token & backend not from the front end, meaning we only send the body from the frontend
@@ -40,7 +44,7 @@ exports.postOneScream = (request, response) => {
     .then((doc) => {
       const responseScream = newScream;
       responseScream.screamId = doc.id;
-      response.json({ message: `document ${doc.id} was created successfully` });
+      response.json(responseScream);
     })
     .catch((error) => {
       response.status(500).json({ error: "something went wrong" });
