@@ -26,7 +26,7 @@ exports.getAllScreams = (request, response) => {
     This function is responsible for posting one scream
 */
 exports.postOneScream = (request, response) => {
-  if (req.body.body.trim() === "") {
+  if (request.body.body.trim() === "") {
     return response.status(400).json({ body: "Body must not be empty" });
   }
 
