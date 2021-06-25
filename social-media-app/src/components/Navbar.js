@@ -8,9 +8,9 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Tooltip } from "@material-ui/core";
 import MyButton from "../util/MyButton";
-import AddIcon from "@material-ui/icons/Add";
 import HomeIcon from "@material-ui/icons/Home";
 import Notifications from "@material-ui/icons/Notifications";
+import PostScream from "./PostScream";
 export class Navbar extends Component {
   render() {
     const { authenticated } = this.props;
@@ -19,9 +19,8 @@ export class Navbar extends Component {
         <Toolbar className="nav-container">
           {authenticated ? (
             <>
-              <MyButton tip="Post a Scream">
-                <AddIcon />
-              </MyButton>
+              <PostScream />
+
               <Link to="/">
                 <MyButton tip="Home">
                   <HomeIcon />
