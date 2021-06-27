@@ -7,20 +7,22 @@ import PropTypes from "prop-types";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { connect } from "react-redux";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { postScream } from "../redux/actions/dataActions";
+import { postScream, clearErrors } from "../redux/actions/dataActions";
 
 const styles = (theme) => ({
   ...theme.customStyles,
   submitButton: {
     position: "relative",
+    float: "right",
+    marginTop: 10,
   },
   progressSpinner: {
     position: "absolute",
   },
   closeButton: {
     position: "absolute",
-    left: "90%",
-    tip: "10%",
+    left: "91%",
+    top: "6%",
   },
 });
 
@@ -38,8 +40,7 @@ export class PostScream extends Component {
       });
     }
     if (!nextProps.UI.errors && !nextProps.UI.loading) {
-      this.setState({ body: "" });
-      this.handleClose();
+      this.setState({ body: "", open: false, errors: {} });
     }
   }
 
@@ -47,7 +48,7 @@ export class PostScream extends Component {
     this.setState({ open: true });
   };
   handleClose = () => {
-    this.setState({ open: false, errors: {} });
+    this.props.clearErrors();
   };
 
   handleChange = (event) => {
@@ -104,6 +105,7 @@ export class PostScream extends Component {
 
 PostScream.propTypes = {
   postScream: PropTypes.func.isRequired,
+  clearErrors: PropTypes.func.isRequired,
   UI: PropTypes.object.isRequired,
 };
 
@@ -111,4 +113,9 @@ const mapStateToProps = (state) => ({
   UI: state.UI,
 });
 
-export default connect(mapStateToProps, { postScream })(withStyles(styles)(PostScream));
+const mapActionsToState = {
+  clearErrors,
+  postScream,
+};
+
+export default connect(mapStateToProps, mapActionsToState)(withStyles(styles)(PostScream));
