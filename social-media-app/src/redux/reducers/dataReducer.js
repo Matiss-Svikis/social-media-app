@@ -22,7 +22,12 @@ export default function (state = initialState, action) {
         loading: false,
       };
     }
-    //8h 38 min
+    case SET_SCREAM: {
+      return {
+        ...state,
+        scream: action.payload,
+      };
+    }
     case UNLIKE_SCREAM:
     case LIKE_SCREAM: {
       let index = state.screams.findIndex((scream) => scream.screamId === action.payload.screamId);
