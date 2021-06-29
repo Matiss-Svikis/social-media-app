@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import CloseIcon from "@material-ui/icons/Close";
 import UnfoldMore from "@material-ui/icons/UnfoldMore";
 import MyButton from "../util/MyButton";
-import { Dialog, DialogContent, DialogTitle, TextField, Button } from "@material-ui/core/";
+import { Dialog, DialogContent } from "@material-ui/core/";
 import PropTypes from "prop-types";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { connect } from "react-redux";
